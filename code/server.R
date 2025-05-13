@@ -1,19 +1,23 @@
 
 # getwd() # Adjust as needed to "inseason-escapement" directory
 
-# library(tidyverse)
-# library(scales)
-# library(shiny)
-# library(shinythemes)
-# library(waiter)
-# library(DT)
+library(tidyverse)
+library(scales)
+library(shiny)
+library(shinythemes)
+library(waiter)
+library(DT)
 library(gridExtra)
 library(rsconnect)
 
-# Run to 'source' scripts below to load data. Alternatively, run code from 'code/helpers.R' and 'code/ui.R' 
+CurrentYear <- 2023                                                             ## current in-season year 
+StreamLife <- 17.5                                                              ## estimated life in stream of fish
+ObsEff <- 1.0                                                                   ## observer efficiency
+
+# Run two 'source' scripts below to load data. Alternatively, run code from 'code/helpers.R' and 'code/ui.R' 
 # scripts individually first before running this script:
-# source('code/helpers.R')
-# source('code/ui.R')
+source('code/helpers.R')
+source('code/ui.R')
 
 theme_set(theme_bw(base_size = 20)+
           theme(panel.grid.major.y = element_line(color = "gray80",linewidth = 0.5,linetype = 2), 
@@ -228,7 +232,7 @@ p1 <- ggplot(aggregate_data(), aes(x = OriginDate)) +
 
 # shinyApp(ui,server)
 
-# runApp("code")
+# runApp(paste0(getwd(),"/code"))
 
 # deployApp("code",
 #           appName = "inseason_escapement_monitoring_app",
