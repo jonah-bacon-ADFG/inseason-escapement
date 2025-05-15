@@ -1,44 +1,46 @@
-﻿SPECIES,DISTRICT,STOCK
-Pink Salmon,Kamishak,Amakdedori Creek
-Chum Salmon,Kamishak,Big Kamishak River
-Pink Salmon,Kamishak,Brown's Peak Creek
-Chum Salmon,Kamishak,Bruin River
-Pink Salmon,Kamishak,Bruin River
-Chum Salmon,Kamishak,Cottonwood Creek
-Chum Salmon,Kamishak,Douglas River
-Chum Salmon,Kamishak,Iniskin River
-Chum Salmon,Kamishak,Little Kamishak River
-Pink Salmon,Kamishak,Little Kamishak River
-Chum Salmon,Kamishak,McNeil River
-Chum Salmon,Kamishak,Sugarloaf Creek
-Chum Salmon,Kamishak,Sunday Creek
-Pink Salmon,Kamishak,Sunday Creek
-Chum Salmon,Kamishak,Ursus Lagoon Creeks
-Pink Salmon,Outer,Desire Lake
-Chum Salmon,Outer,Dogfish Lagoon Creeks
-Pink Salmon,Outer,Dogfish Lagoon Creeks
-Chum Salmon,Outer,Island Creek
-Pink Salmon,Outer,Island Creek
-Pink Salmon,Outer,James Lagoon Creeks
-Chum Salmon,Outer,Middle Creek
-Pink Salmon,Outer,Middle Creek
-Chum Salmon,Outer,Petrof River
-Chum Salmon,Outer,Port Chatham Creeks
-Pink Salmon,Outer,Port Chatham Creeks
-Chum Salmon,Outer,Port Dick Creek
-Pink Salmon,Outer,Port Dick Creek
-Chum Salmon,Outer,Rocky River
-Pink Salmon,Outer,Rocky River
-Chum Salmon,Outer,Slide Creek
-Pink Salmon,Outer,Slide Creek
-Pink Salmon,Outer,South Nuka Island Creek
-Pink Salmon,Outer,Taylor Bay Creeks
-Pink Salmon,Outer,Windy Bay Left Creek
-Pink Salmon,Outer,Windy Bay Right Creek
-Pink Salmon,Southern,Barabara Creek
-Pink Salmon,Southern,China Poot Creek
-Chum Salmon,Southern,Humpy Creek
-Pink Salmon,Southern,Humpy Creek
-Chum Salmon,Southern,Port Graham River
-Chum Salmon,Southern,Seldovia River
-Pink Salmon,Southern,Seldovia River
+﻿Species,District,Stock,Code
+Pink,Kamishak,Amakdedori Creek,
+Chum,Kamishak,Big Kamishak River,
+Pink,Kamishak,Brown's Peak Creek,
+Chum,Kamishak,Bruin River,
+Pink,Kamishak,Bruin River,
+Chum,Kamishak,Cottonwood Creek,
+Chum,Kamishak,Douglas River,
+Chum,Kamishak,Iniskin River,
+Chum,Kamishak,Little Kamishak River,
+Pink,Kamishak,Little Kamishak River,
+Chum,Kamishak,McNeil River,
+Chum,Kamishak,Sugarloaf Creek,
+Chum,Kamishak,Sunday Creek,
+Pink,Kamishak,Sunday Creek,
+Chum,Kamishak,Ursus Lagoon Creeks,
+Pink,Outer,Desire Lake,
+Chum,Outer,Dogfish Lagoon Creeks,DGFC
+Pink,Outer,Dogfish Lagoon Creeks,DGFC
+Chum,Outer,Island Creek,PDIS
+Pink,Outer,Island Creek,PDIS
+Pink,Outer,James Lagoon Creeks,
+Chum,Outer,Middle Creek,
+Pink,Outer,Middle Creek,
+Chum,Outer,Petrof River,
+Chum,Outer,Port Chatham Creeks,PCHC
+Pink,Outer,Port Chatham Creeks,PCHC
+Chum,Outer,Port Dick Creek,PDHE
+Pink,Outer,Port Dick Creek,PDHE
+Chum,Outer,Rocky River,
+Pink,Outer,Rocky River,
+Chum,Outer,Slide Creek,
+Pink,Outer,Slide Creek,
+Pink,Outer,South Nuka Island Creek,
+Pink,Outer,Taylor Bay Creeks,
+Pink,Outer,Windy Bay Left Creek,
+Pink,Outer,Windy Bay Right Creek,
+Pink,Southern,Barabara Creek,BARA
+Pink,Southern,China Poot Creek,CHPO
+Chum,Southern,Humpy Creek,HUCK
+Pink,Southern,Humpy Creek,HUCK
+Chum,Southern,Port Graham River,POGR
+Chum,Southern,Seldovia River,SELD
+Pink,Southern,Seldovia River,SELD
+Pink,Southern,Tutka Creek,TUTK
+Chum,Southern,Tutka Creek,TUTK
