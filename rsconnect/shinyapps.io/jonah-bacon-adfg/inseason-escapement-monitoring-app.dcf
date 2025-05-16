@@ -5,6 +5,9 @@ account: jonah-bacon-adfg
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 14748530
-bundleId: 10278372
+bundleId: 10295533
 url: https://jonah-bacon-adfg.shinyapps.io/inseason-escapement-monitoring-app/
 version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: changelog.md|CY-data-input.R|Historic-RTC-data-input.R|README.md
