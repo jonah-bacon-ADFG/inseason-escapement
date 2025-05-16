@@ -1,14 +1,17 @@
 
 library(tidyverse)
-library(xlsx)
+library(readxl)
 library(fs)
+library(scales)
 
+rm(list = ls())
 
 CurrentYear <- 2024                                                             ## current in-season year 
 StreamLife <- 17.5                                                              ## estimated life in stream of fish
 ObsEff <- 1.0                                                                   ## observer efficiency
 
-DIST.STOCKS <- read.csv("data/DISTRICT_STOCKS.csv")
+DIST.STOCKS <- read.csv("input/DISTRICT_STOCKS.csv") %>% 
+  select(-Full_Species)
 
 # Upload current in-season data ----
 
@@ -40,12 +43,10 @@ ground.df <- map_dfr(
          MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## create a MMDD date without year
          OriginDate = as.Date(JulianDay, origin = as.Date("0000-01-01")),
          Survey = "Ground") %>% 
+  rename(Code = Stock) %>% 
   ungroup() %>% 
-  left_join(select(DIST.STOCKS,-Species),
-            by = join_by(Stock == Code),
-            relationship = "many-to-many") %>% 
-  select(-Stock) %>% 
-  rename(Stock = Stock.y)
+  left_join(DIST.STOCKS,
+            by = join_by(Species,Code))
 
 ## Aerial Surveys ----
 
@@ -73,8 +74,8 @@ aerial.df <- map_dfr(
          MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## create a MMDD date without year
          OriginDate = as.Date(JulianDay, origin = as.Date("0000-01-01")),
          Survey = "Aerial") %>% 
-  left_join(select(DIST.STOCKS,-c(Species,Code)),
-            by = join_by(Stock),
+  left_join(select(DIST.STOCKS,-c(Code)),
+            by = join_by(Species,Stock),
             relationship = "many-to-many")
 
 
@@ -85,7 +86,6 @@ all.survey.df <- full_join(aerial.df,ground.df,
   mutate(Species = ifelse(Species == "Pink","Pink Salmon",Species),
          Species = ifelse(Species == "Chum","Chum Salmon",Species),
          Species = ifelse(Species == "Sockeye","Sockeye Salmon",Species)) 
-         # Stock = ifelse(Stock %in% DIST.STOCKS$Code,DIST.STOCKS$Stock[DIST.STOCKS$Code],Stock)) %>% 
 
 escapement.df <- all.survey.df %>% 
   group_by(Species,Stock,District,Survey) %>%                                  ## Groups dataframe by categories
@@ -93,11 +93,7 @@ escapement.df <- all.survey.df %>%
 
 ## Make sure there is no object named "CY.AUC.df" in your R Studio environment before running following for-loop:
 ## nrow counts how many unique groups
-
-rm(list = "CY.AUC.df")
-
-i=1                                                                             ## for loop runs the AUC calculations for
-for (i in c(1:nrow(escapement.df))){                                             ## each group
+rm(list = "CY.AUC.df"); for (i in c(1:nrow(escapement.df))){                              ## each group
   temp.CY.AUC.df <- all.survey.df %>% 
     filter(  Species == escapement.df$Species[i] &
              Stock == escapement.df$Stock[i] &
@@ -141,11 +137,7 @@ for (i in c(1:nrow(escapement.df))){                                            
     }
     
   }
-  
-  # for (k in c(1:nrow(temp.CY.AUC.df))){                                              ## Calculates PercentEscape Column.
-  #   temp.CY.AUC.df$PercentEscape[k] <- temp.CY.AUC.df$SumEscape[k] / temp.CY.AUC.df$SumEscape[nrow(temp.CY.AUC.df)]
-  # }
-  
+
   if(exists('CY.AUC.df') && is.data.frame(get('CY.AUC.df'))){                           ##checks to see if output dataframe exists
     CY.AUC.df <- rbind(CY.AUC.df,temp.CY.AUC.df)       ##if it does, it appends new data
   }
@@ -158,33 +150,27 @@ for (i in c(1:nrow(escapement.df))){                                            
 
 ## Escapement for Individual-Stream Management Objectives ------------------
 
+IND.CY.AUC.df <- CY.AUC.df
+
 IND.CY.AUC.table <- CY.AUC.df %>% 
   mutate(FishDays = number(round(FishDays,0),big.mark = ","),
          SumFishDays = number(round(SumFishDays,0),big.mark = ","),
          EscInd = number(round(EscInd,0),big.mark = ","),
          SumEscape = number(round(SumEscape,0),big.mark = ",")) %>% 
-  select(-c(MMDD,OriginDate))
+  select(-c(MMDD,OriginDate,Code))
 
 
 ## Escapement for District Aggregate SEGs ----------------------------------
 
-
 AGG.CY.AUC.df <- CY.AUC.df %>% 
-  left_join(DIST.STOCKS,
-            by = join_by(Species == SPECIES,
-                         Stock == STOCK)) %>% 
-  # mutate(DISTRICT = ifelse(DISTRICT == "Kamishak","Kamishak District",DISTRICT),
-  #        DISTRICT = ifelse(DISTRICT == "Southern","Southern District",DISTRICT),
-  #        DISTRICT = ifelse(DISTRICT == "Outer","Outer District",DISTRICT)) %>% 
-  filter(!is.na(DISTRICT))
+  filter(!is.na(District)) %>% 
+  select(-c(MMDD,OriginDate,Code))
 
-i=1
-j=1
-for (i in 1:length(unique(AGG.CY.AUC.df$DISTRICT))) {
+rm(list = "temp.df2") ; for (i in 1:length(unique(AGG.CY.AUC.df$District))) {
   
-  for (j in 1:length(unique(AGG.CY.AUC.df$SPECIES))) {
+  for (j in 1:length(unique(AGG.CY.AUC.df$Species))) {
     
-    temp.df <- filter(AGG.CY.AUC.df, DISTRICT == unique(AGG.CY.AUC.df$DISTRICT)[i] & SPECIES == unique(AGG.CY.AUC.df$SPECIES)[j]) %>% 
+    temp.df <- filter(AGG.CY.AUC.df, District == unique(AGG.CY.AUC.df$District)[i] & Species == unique(AGG.CY.AUC.df$Species)[j]) %>% 
       arrange(Date)
     
     for (k in 1:nrow(temp.df)) {
@@ -213,20 +199,24 @@ for (i in 1:length(unique(AGG.CY.AUC.df$DISTRICT))) {
 }
 
 AGG.CY.AUC.df <- temp.df2 %>% 
-  group_by(SPECIES,DISTRICT,JulianDay) %>% 
+  group_by(Species,District,JulianDay) %>% 
   summarise(DistSumEscape = max(DistSumEscape))
 
 AGG.CY.AUC.surv.df <- temp.df2 %>% 
-  select(SPECIES,DISTRICT,STOCK,JulianDay,COUNT)
+  select(Species,District,Stock,JulianDay,Survey,Condition,SurveyCount)
 
 AGG.CY.AUC.table <- temp.df2 %>% 
-  rename(Stock = STOCK,
-         SurveyType = SURVEY_TYPE,
-         Count = COUNT,
-         StreamSumEscape = SumEscape) %>% 
+  rename(StreamSumEscape = SumEscape) %>% 
   mutate(FishDays = number(round(FishDays,0),big.mark = ","),
          SumFishDays = number(round(SumFishDays,0),big.mark = ","),
          EscInd = number(round(EscInd,0),big.mark = ","),
          StreamSumEscape = number(round(StreamSumEscape,0),big.mark = ","),
          DistSumEscape = number(round(DistSumEscape,0),big.mark = ",")) %>% 
-  select(-c(Year,MMDD,OriginDate,OFFICIAL_ESCAPEMENT,PercentEscape))
+  select(c(Date,Species,Stock,District,Survey,Condition,SurveyCount,JulianDay,Days,FishDays,SumFishDays,EscInd,StreamSumEscape,DistSumEscape))
+
+
+# Save updated CY data ----------------------------------------------------
+
+save(list = c("AGG.CY.AUC.df","AGG.CY.AUC.surv.df","AGG.CY.AUC.table","IND.CY.AUC.df","IND.CY.AUC.table"), 
+     file = "data/CurrentYearAUC.RData")
+
