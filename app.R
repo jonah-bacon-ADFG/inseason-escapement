@@ -9,6 +9,7 @@ library(waiter)
 library(DT)
 library(gridExtra)
 library(rsconnect)
+library(ggrepel)
 
 rm(list = ls())
 
@@ -26,7 +27,7 @@ theme_set(theme_bw(base_size = 20)+
                   axis.text.x = element_text(angle = 270,vjust=-0.1)))
 
 load("data/HistoricRTC.RData")
-load("data/CurrentYearAUC.RData")
+load(paste0("data/Inseason_",CurrentYear,"_AUC.RData"))
 
 # User Interface ----------------------------------------------------------------------
 
@@ -39,7 +40,6 @@ ui <- fluidPage(
                       sidebarLayout(
                         sidebarPanel(
                           width = 2,
-                          # tags$head(tags$style(HTML("hr {border-top: 1px solid #b3b3b3;}"))),
                           h2("Chart Options"),
                           hr(),
                           conditionalPanel(condition = "input.mainpanels_id == 'District-Wide Aggregate SEG Goals'",
@@ -52,7 +52,23 @@ ui <- fluidPage(
                                                        c("")),
                                            selectInput(inputId = "yearInput1",
                                                        label = h3("Year Range"),
-                                                       c(""))),
+                                                       c("")),
+                                           checkboxGroupInput(inputId = "surveyType1", 
+                                                       label = h3("Survey Method"),
+                                                       choices = list("Aerial" = "Aerial",  
+                                                                      "Ground" = "Ground"), 
+                                                       selected = c("Aerial","Ground")),
+                                           checkboxGroupInput(inputId = "surveyCondition1", 
+                                                              label = h3("Survey Grade"),
+                                                              choices = list(
+                                                                "1" = 1,
+                                                                "2" = 2,
+                                                                "3" = 3,
+                                                                "4" = 4,
+                                                                "5" = 5,
+                                                                "NA" = NA
+                                                              ),
+                                                              selected = c("1","2","3","4","5","NA"))),
                           conditionalPanel(condition = "input.mainpanels_id == 'Individual-Stock Management Objective Goals'",
                                            selectInput(inputId = "speciesInput2",
                                                        label = h3("Species"),
@@ -64,17 +80,37 @@ ui <- fluidPage(
                                                        c("")),
                                            selectInput(inputId = "yearInput2",
                                                        label = h3("Year Range"),
-                                                       c("")))),
-                        mainPanel(
+                                                       c("")),
+                                           checkboxGroupInput(inputId = "surveyType2", 
+                                                              label = h3("Survey Method"),
+                                                              choices = list("Aerial" = "Aerial",  
+                                                                             "Ground" = "Ground"), 
+                                                              selected = c("Aerial","Ground")),
+                                           checkboxGroupInput(inputId = "surveyCondition2", 
+                                                              label = h3("Survey Grade"),
+                                                              choices = list(
+                                                                "1" = 1,
+                                                                "2" = 2,
+                                                                "3" = 3,
+                                                                "4" = 4,
+                                                                "5" = 5,
+                                                                "NA" = NA
+                                                              ),
+                                                              selected = c("1","2","3","4","5","NA")))),
+                          mainPanel(
                           width = 10,
                           tabsetPanel(
                             tabPanel(title = "District-Wide Aggregate SEG Goals", 
-                                     plotOutput("agg.seg.escape", height = "700px", hover = hoverOpts(id ="plot_hover")),
-                                     verbatimTextOutput("hover_info"),
+                                     plotOutput("agg.seg.escape.1", height = "350px", hover = "plot_hover"),
+                                     verbatimTextOutput("plot_info1"),
+                                     plotOutput("agg.seg.escape.2", height = "350px", hover = "plot_hover"),
+                                     verbatimTextOutput("plot_info2"),
                                      DTOutput("agg.seg.escape.table")),
                             tabPanel(title = "Individual-Stock Management Objective Goals", 
-                                     plotOutput("manage.obj.escape", height = "700px", hover = hoverOpts(id ="plot_hover")),
-                                     verbatimTextOutput("hover_info"),
+                                     plotOutput("manage.obj.escape.1", height = "350px", hover = "plot_hover"),
+                                     verbatimTextOutput("plot_info3"),
+                                     plotOutput("manage.obj.escape.2", height = "350px", hover = "plot_hover"),
+                                     verbatimTextOutput("plot_info4"),
                                      DTOutput("manage.obj.escape.table")),
                             id="mainpanels_id"
                           )
@@ -128,7 +164,7 @@ server <- function(input, output, session) {
                  )
                }
   )
-  
+
   ## Make data reactive - SEG's ----
   
   aggregate_data <- reactive({
@@ -147,14 +183,14 @@ server <- function(input, output, session) {
   aggregate.CY.surv_data <- reactive({
     
     AGG.CY.AUC.surv.df %>% 
-      filter(Species == input$speciesInput1 & District == input$districtInput1)
+      filter(Species == input$speciesInput1 & District == input$districtInput1 & SurveyType %in% c(input$surveyType1) & Stream_Condition %in% c(input$surveyCondition1))
     
   })
   
   aggregate.CY_table <- reactive({
     
     AGG.CY.AUC.table %>% 
-      filter(Species == input$speciesInput1 & District == input$districtInput1) %>% 
+      filter(Species == input$speciesInput1 & District == input$districtInput1 & SurveyType %in% c(input$surveyType1) & Stream_Condition %in% c(input$surveyCondition1)) %>% 
       ungroup() %>% 
       select(-c(Species,District))
     
@@ -162,9 +198,9 @@ server <- function(input, output, session) {
   
   ## Output plots - SEG's ----
   
-  output$agg.seg.escape <- renderPlot({
+  output$agg.seg.escape.1 <- renderPlot({
     
-    p1 <- ggplot(aggregate_data(), aes(x = OriginDate)) +
+    ggplot(aggregate_data(), aes(x = OriginDate)) +
       
       geom_line(aes(y = LowerSEG), color ="steelblue", linewidth = 0.7) +
       geom_ribbon(aes(ymin = LowerSEG_se_lwr, ymax = LowerSEG_se_upr), fill = "steelblue", alpha = 0.3) +
@@ -178,26 +214,32 @@ server <- function(input, output, session) {
                 color = "red", lty = 2, linewidth = 1, alpha = 0.5) +
       geom_point(data = aggregate.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = DistSumEscape),
                  shape = 25, fill = "red", color = "black", size = 3) +
-      
-      scale_x_date(breaks = "1 week", date_labels = "%b %d") +
+
+      scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(303, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
       ylab("Cumulative Escapement")
     
+  })
+  
+  output$agg.seg.escape.2 <- renderPlot({
     
-    p2 <- ggplot(data = aggregate.CY.surv_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y=SurveyCount, color = Stock, fill = Stock)) + ## AUC plot
+    ggplot(data = aggregate.CY.surv_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y=SurveyCount, 
+                                                label = Stream_Condition, color = Stock, fill = Stock, shape = SurveyType)) + ## AUC plot
       
       geom_line(linewidth = 1, alpha = 0.5) +
-      geom_point(shape = 25, color = "black", size = 3) +
-      
-      scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(325, origin = as.Date("0000-01-01")))) +
+      geom_point(color = "black", size = 3, show.legend = FALSE) +
+      scale_shape_manual(values = c(21,22,24)) + 
+
+      scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(303, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
       ylab("Survey Count") +
-      
+
       theme(legend.position = "inside",
-            legend.position.inside = c(0.1,0.9))
-    
-    grid.arrange(p1, p2, ncol = 1, nrow = 2)
-    
+            legend.margin = margin(0, 0, 0, 0), # turned off for alignment
+            legend.justification.inside = c(0.02,1),
+            legend.box.background = element_rect(color = "black", linewidth = 1, linetype = 1),
+            legend.box.margin = margin(5, 5, 5, 5))
+
   })
   
   output$agg.seg.escape.table <- renderDataTable(aggregate.CY_table())
@@ -221,7 +263,7 @@ server <- function(input, output, session) {
                  )
                }
   )
-  
+
   ## Make data reactive - ISMO's ----
   
   ind.stock_data <- reactive({
@@ -233,14 +275,14 @@ server <- function(input, output, session) {
   ind.stock.CY_data <- reactive({
     
     IND.CY.AUC.df %>% 
-      filter(Species == input$speciesInput2 & Stock == input$stockInput2)
+      filter(Species == input$speciesInput2 & Stock == input$stockInput2 & SurveyType %in% c(input$surveyType2) & Stream_Condition %in% c(input$surveyCondition2))
     
   })
   
   ind.stock.CY_table <- reactive({
     
     IND.CY.AUC.table %>% 
-      filter(Species == input$speciesInput2 & Stock == input$stockInput2) %>% 
+      filter(Species == input$speciesInput2 & Stock == input$stockInput2 & SurveyType %in% c(input$surveyType2) & Stream_Condition %in% c(input$surveyCondition2)) %>% 
       ungroup() %>% 
       select(-c(Species,Stock))
     
@@ -248,9 +290,9 @@ server <- function(input, output, session) {
   
   ## Output plots - ISMO's ----
   
-  output$manage.obj.escape <- renderPlot({
+  output$manage.obj.escape.1 <- renderPlot({
     
-    p1 <- ggplot(ind.stock_data(), aes(x = OriginDate)) +
+    ggplot(ind.stock_data(), aes(x = OriginDate)) +
       
       geom_line(aes(y = LowerSEG), color ="steelblue", linewidth = 0.7) +
       geom_ribbon(aes(ymin = LowerSEG_se_lwr, ymax = LowerSEG_se_upr), fill = "steelblue", alpha = 0.3) +
@@ -260,53 +302,72 @@ server <- function(input, output, session) {
       
       geom_ribbon(aes(ymin = LowerSEG_se_upr, ymax = UpperSEG_se_lwr), fill = "steelblue", alpha = 0.1) +
       
-      geom_line(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape), 
-                color = "red", lty = 2, linewidth = 1, alpha = 0.5) +
-      geom_point(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape), 
-                 shape = 25, fill = "red", color = "black", size = 3) +
+      geom_line(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, linetype = SurveyType),
+                color = "red", linewidth = 1, alpha = 0.5) +
+      geom_point(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, shape = SurveyType, color = SurveyType),
+                 fill = "red", color = "black", size = 3) +
+      geom_label_repel(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, label = Stream_Condition, size = 7, fontface = "bold"),
+                 point.padding = 1.5, label.size = 0.8, color = "black", fill = "white", show.legend = FALSE) +
+      scale_shape_manual(values = c(21,22,24)) +
+      scale_linetype_manual(values = c(2,3,4)) +
       
-      scale_x_date(breaks = "1 week", date_labels = "%b %d") +
+      scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(303, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
-      ylab("Cumulative Escapement")
+      ylab("Cumulative Escapement") +
+      labs(shape = "Survey Type", linetype = "Survey Type") +
+      
+      theme(legend.position = "inside",
+            legend.margin = margin(0, 0, 0, 0), # turned off for alignment
+            legend.justification.inside = c(0.02,1),
+            legend.box.background = element_rect(color = "black", linewidth = 1, linetype = 1),
+            legend.box.margin = margin(5, 5, 5, 5))
     
+  })
+  
+  output$manage.obj.escape.2 <- renderPlot({
     
-    p2 <- ggplot(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y=SurveyCount)) + ## AUC plot
+    ggplot(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y=SurveyCount, label = Stream_Condition, shape = SurveyType, linetype = SurveyType)) + ## AUC plot
       
       geom_line(color = "red", linewidth = 1, alpha = 0.5) + 
-      geom_point(shape = 25, fill = "red", color = "black", size = 3) +
+      geom_point(fill = "red", color = "black", size = 3) +
+      geom_label_repel(aes(size = 7, fontface = "bold"), point.padding = 1.5, label.size = 0.8, color = "black", fill = "white", show.legend = FALSE) +
+      scale_shape_manual(values = c(21,22,24)) +
+      scale_linetype_manual(values = c(2,3,4)) +
       
-      scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(325, origin = as.Date("0000-01-01")))) +
+      scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(303, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
-      ylab("Survey Count")
-    
-    grid.arrange(p1, p2, ncol = 1, nrow = 2)
+      ylab("Survey Count") +
+      labs(shape = "Survey Type", linetype = "Survey Type") +
+      
+      theme(legend.position = "inside",
+            legend.margin = margin(0, 0, 0, 0), # turned off for alignment
+            legend.justification.inside = c(0.02,1),
+            legend.box.background = element_rect(color = "black", linewidth = 1, linetype = 1),
+            legend.box.margin = margin(5, 5, 5, 5))
     
   })
   
   output$manage.obj.escape.table <- renderDataTable(ind.stock.CY_table())
   
-  ## WORK IN PROGRESS: Hover text around cursor on plot ----
+  ## Hover text around cursor on plot ----
   
-  # displayed_text <- reactive({
-  #   req(input$plot_hover)
-  #   hover <- input$plot_hover
-  #   dist <- sqrt((hover$y - filtered_data2()$SumEscape)^2)
-  # 
-  #   if(min(dist) < 100) {
-  #     filtered_data2()[filtered_data2()$SumEscape == which.min(dist),]
-  #     filtered_data2()$SumEscape[which.min(dist)]
-  #   } else {
-  #     NULL
-  #   }
-  # })
-  # 
-  # output$hover_info <- renderPrint({
-  #   req(displayed_text())
-  # 
-  #   cat("Cumulative escapement\n")
-  #   displayed_text()
-  # })
+  output$plot_info1 <- renderText({
+    paste0("x=", format(as.Date(input$plot_hover$x), "%b %d"), "\ny=", round(as.numeric(input$plot_hover$y),0))
+  })
   
+  output$plot_info2 <- renderText({
+    paste0("x=", format(as.Date(input$plot_hover$x), "%b %d"), "\ny=", round(as.numeric(input$plot_hover$y),0))
+  })
+  
+  output$plot_info3 <- renderText({
+    paste0("x=", format(as.Date(input$plot_hover$x), "%b %d"), "\ny=", round(as.numeric(input$plot_hover$y),0))
+  })
+  
+  output$plot_info4 <- renderText({
+    paste0("x=", format(as.Date(input$plot_hover$x), "%b %d"), "\ny=", round(as.numeric(input$plot_hover$y),0))
+  })
+
 }
+
 
 shinyApp(ui,server)
