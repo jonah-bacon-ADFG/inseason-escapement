@@ -13,6 +13,8 @@ ObsEff <- 1.0                                                                   
 DIST.STOCKS <- read.csv("input/DISTRICT_STOCKS.csv") %>% 
   select(-Full_Species)
 
+load("data/HistoricRTC.RData")
+
 # Upload current in-season data ----
 
 ## Ground Surveys ----
@@ -168,7 +170,12 @@ IND.CY.AUC.table <- CY.AUC.df %>%
 ## Escapement for District Aggregate SEGs ----------------------------------
 
 AGG.CY.AUC.df <- CY.AUC.df %>% 
-  filter(!is.na(District))
+  filter(!is.na(District)) %>% 
+  mutate(JulianDay = round(JulianDay,0)) %>% 
+  left_join(select(RTC.AGG.df, c(JulianDay,Species,PinkOddEven,District,YEAR.RANGE,PercentEscape)),
+            by = join_by(Species, JulianDay, District),
+            relationship = "many-to-many")
+  
 
 rm(list = "temp.df2") ; for (i in 1:length(unique(AGG.CY.AUC.df$District))) {
   
@@ -203,13 +210,13 @@ rm(list = "temp.df2") ; for (i in 1:length(unique(AGG.CY.AUC.df$District))) {
 }
 
 AGG.CY.AUC.df <- temp.df2 %>% 
-  group_by(Species,District,JulianDay) %>% 
+  group_by(Species,District,JulianDay,PinkOddEven,YEAR.RANGE,PercentEscape) %>% 
   summarise(DistSumEscape = max(DistSumEscape))
 
 AGG.CY.AUC.surv.df <- temp.df2 %>% 
   mutate(Stream_Condition = as.character(Stream_Condition)) %>% 
   replace_na(list(Stream_Condition = "NA")) %>%
-  select(Species,District,Stock,JulianDay,SurveyType,Stream_Condition,SurveyCount)
+  select(Species,District,Stock,JulianDay,SurveyType,Stream_Condition,SurveyCount,PinkOddEven,YEAR.RANGE,PercentEscape)
 
 AGG.CY.AUC.table <- temp.df2 %>% 
   rename(StreamSumEscape = SumEscape) %>% 
@@ -220,7 +227,7 @@ AGG.CY.AUC.table <- temp.df2 %>%
          DistSumEscape = number(round(DistSumEscape,0),big.mark = ","),
          Stream_Condition = as.character(Stream_Condition)) %>% 
          replace_na(list(Stream_Condition = "NA")) %>% 
-  select(c(Date,Species,Stock,District,SurveyType,Stream_Condition,SurveyCount,JulianDay,Days,FishDays,SumFishDays,EscInd,StreamSumEscape,DistSumEscape))
+  select(c(Date,Species,Stock,District,SurveyType,Stream_Condition,SurveyCount,JulianDay,Days,FishDays,SumFishDays,EscInd,StreamSumEscape,DistSumEscape,PinkOddEven,YEAR.RANGE,PercentEscape))
 
 
 # Save updated CY data ----------------------------------------------------
