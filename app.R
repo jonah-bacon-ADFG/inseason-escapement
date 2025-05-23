@@ -41,134 +41,75 @@ ui <- fluidPage(
                         sidebarPanel(
                           width = 2,
                           h2("Chart Options"),
-                          hr(),
                           conditionalPanel(condition = "input.mainpanels_id == 'District-Wide Aggregate SEG Goals'",
                                            selectInput(inputId = "speciesInput1",
                                                        label = h3("Species"),
                                                        choices = list("Pink Salmon" = "Pink Salmon",
                                                                       "Chum Salmon" = "Chum Salmon")),
-                              conditionalPanel(condition = "input.speciesInput1 == 'Pink Salmon'",
-                                               radioButtons(inputId = "oddevenInput1", 
-                                                            label = h3("Pink Salmon Odd/Even Year Run-Timing"), 
-                                                            choices = c("Even-year" = "Even", "Odd-year" = "Odd"),
-                                                            selected = "Odd"),
-                                               selectInput(inputId = "districtInput1",
-                                                           label = h3("District"),
-                                                           c("")),
-                                               selectInput(inputId = "yearInput1",
-                                                           label = h3("Year Range"),
-                                                           c("")),
-                                               selectInput(inputId = "example.yearInput1",
-                                                           label = h3("Plot historical year"),
-                                                           choices = c(""),
-                                                           multiple = TRUE),
-                                               checkboxGroupInput(inputId = "surveyType1", 
-                                                           label = h3("Survey Method"),
-                                                           choices = list("Aerial" = "Aerial",  
-                                                                          "Ground" = "Ground"), 
-                                                           selected = c("Aerial","Ground")),
-                                               checkboxGroupInput(inputId = "surveyCondition1", 
-                                                                  label = h3("Survey Grade"),
-                                                                  choices = list(
-                                                                    "1" = 1,
-                                                                    "2" = 2,
-                                                                    "3" = 3,
-                                                                    "4" = 4,
-                                                                    "5" = 5,
-                                                                    "NA" = NA
-                                                                  ),
-                                                                  selected = c("1","2","3","4","5","NA"))),
-                              conditionalPanel(condition = "input.speciesInput1 != 'Pink Salmon'",
-                                               selectInput(inputId = "districtInput1",
-                                                           label = h3("District"),
-                                                           c("")),
-                                               selectInput(inputId = "yearInput1",
-                                                           label = h3("Year Range"),
-                                                           c("")),
-                                               selectInput(inputId = "example.yearInput1",
-                                                           label = h3("Plot historical year"),
-                                                           choices = c(""),
-                                                           multiple = TRUE),
-                                               checkboxGroupInput(inputId = "surveyType1", 
-                                                                  label = h3("Survey Method"),
-                                                                  choices = list("Aerial" = "Aerial",  
-                                                                                 "Ground" = "Ground"), 
-                                                                  selected = c("Aerial","Ground")),
-                                               checkboxGroupInput(inputId = "surveyCondition1", 
-                                                                  label = h3("Survey Grade"),
-                                                                  choices = list(
-                                                                    "1" = 1,
-                                                                    "2" = 2,
-                                                                    "3" = 3,
-                                                                    "4" = 4,
-                                                                    "5" = 5,
-                                                                    "NA" = NA
-                                                                  ),
-                                                                  selected = c("1","2","3","4","5","NA")))),
+                                           radioButtons(inputId = "oddevenInput1", 
+                                                       label = h3("Odd/Even Year Run-Timing"), 
+                                                       choices = c("")),
+                                           selectInput(inputId = "districtInput1",
+                                                       label = h3("District"),
+                                                       c("")),
+                                           selectInput(inputId = "yearInput1",
+                                                       label = h3("Historical RTC Year Range"),
+                                                       c("")),
+                                           selectInput(inputId = "example.yearInput1",
+                                                       label = h3("Plot historical year"),
+                                                       choices = c(""),
+                                                       multiple = TRUE),
+                                           checkboxGroupInput(inputId = "surveyType1", 
+                                                              label = h3("Survey Method"),
+                                                              choices = list("Aerial" = "Aerial",  
+                                                                             "Ground" = "Ground"), 
+                                                              selected = c("Aerial","Ground")),
+                                           checkboxGroupInput(inputId = "surveyCondition1", 
+                                                              label = h3("Survey Grade"),
+                                                              choices = list(
+                                                                "1" = 1,
+                                                                "2" = 2,
+                                                                "3" = 3,
+                                                                "4" = 4,
+                                                                "5" = 5,
+                                                                "NA" = NA
+                                                              ),
+                                                              selected = c("1","2","3","4","5","NA"))),
                           conditionalPanel(condition = "input.mainpanels_id == 'Individual-Stock Management Objective Goals'",
                                            selectInput(inputId = "speciesInput2",
                                                        label = h3("Species"),
                                                        choices = list("Pink Salmon" = "Pink Salmon",
                                                                       "Chum Salmon" = "Chum Salmon",
                                                                       "Sockeye Salmon" = "Sockeye Salmon")),
-                                conditionalPanel(condition =  "input.speciesInput2 == 'Pink Salmon'",
-                                                 radioButtons(inputId = "oddevenInput2", 
-                                                              label = h3("Pink Salmon Odd/Even Year Run-Timing"), 
-                                                              choices = c("Even-year" = "Even", "Odd-year" = "Odd"),
-                                                              selected = "Odd"),
-                                                 selectInput(inputId = "stockInput2",
-                                                             label = h3("Stock"),
-                                                             c("")),
-                                                 selectInput(inputId = "yearInput2",
-                                                             label = h3("Year Range"),
-                                                             c("")),
-                                                 selectInput(inputId = "example.yearInput2",
-                                                             label = h3("Plot historical year"),
-                                                             choices = c(""),
-                                                             multiple = TRUE),
-                                                 checkboxGroupInput(inputId = "surveyType2", 
-                                                                    label = h3("Survey Method"),
-                                                                    choices = list("Aerial" = "Aerial",  
-                                                                                   "Ground" = "Ground"), 
-                                                                    selected = c("Aerial","Ground")),
-                                                 checkboxGroupInput(inputId = "surveyCondition2", 
-                                                                    label = h3("Survey Grade"),
-                                                                    choices = list(
-                                                                      "1" = 1,
-                                                                      "2" = 2,
-                                                                      "3" = 3,
-                                                                      "4" = 4,
-                                                                      "5" = 5,
-                                                                      "NA" = NA
-                                                                    ),
-                                                                    selected = c("1","2","3","4","5","NA"))),
-                                conditionalPanel(condition = "input.speciesInput2 != 'Pink Salmon'",
-                                                 selectInput(inputId = "stockInput2",
-                                                             label = h3("Stock"),
-                                                             c("")),
-                                                 selectInput(inputId = "yearInput2",
-                                                             label = h3("Year Range"),
-                                                             c("")),
-                                                 selectInput(inputId = "example.yearInput2",
-                                                             label = h3("Plot historical year"),
-                                                             choices = c(""),
-                                                             multiple = TRUE),
-                                                 checkboxGroupInput(inputId = "surveyType2", 
-                                                                    label = h3("Survey Method"),
-                                                                    choices = list("Aerial" = "Aerial",  
-                                                                                   "Ground" = "Ground"), 
-                                                                    selected = c("Aerial","Ground")),
-                                                 checkboxGroupInput(inputId = "surveyCondition2", 
-                                                                    label = h3("Survey Grade"),
-                                                                    choices = list(
-                                                                      "1" = 1,
-                                                                      "2" = 2,
-                                                                      "3" = 3,
-                                                                      "4" = 4,
-                                                                      "5" = 5,
-                                                                      "NA" = NA
-                                                                    ),
-                                                                    selected = c("1","2","3","4","5","NA"))))),
+                                           radioButtons(inputId = "oddevenInput2", 
+                                                        label = h3("Odd/Even Year Run-Timing"), 
+                                                        choices = c("")),
+                                           selectInput(inputId = "stockInput2",
+                                                       label = h3("Stock"),
+                                                       c("")),
+                                           selectInput(inputId = "yearInput2",
+                                                       label = h3("Historical RTC Year Range"),
+                                                       c("")),
+                                           selectInput(inputId = "example.yearInput2",
+                                                       label = h3("Plot historical year"),
+                                                       choices = c(""),
+                                                       multiple = TRUE),
+                                           checkboxGroupInput(inputId = "surveyType2", 
+                                                              label = h3("Survey Method"),
+                                                              choices = list("Aerial" = "Aerial",  
+                                                                             "Ground" = "Ground"), 
+                                                              selected = c("Aerial","Ground")),
+                                           checkboxGroupInput(inputId = "surveyCondition2", 
+                                                              label = h3("Survey Grade"),
+                                                              choices = list(
+                                                                "1" = 1,
+                                                                "2" = 2,
+                                                                "3" = 3,
+                                                                "4" = 4,
+                                                                "5" = 5,
+                                                                "NA" = NA
+                                                              ),
+                                                              selected = c("1","2","3","4","5","NA")))),
                           mainPanel(
                           width = 10,
                           tabsetPanel(
@@ -212,6 +153,7 @@ ui <- fluidPage(
              
   ))
 
+
 # Server ------------------------------------------------------------------
 
 
@@ -221,24 +163,33 @@ server <- function(input, output, session) {
   
   observeEvent(input$speciesInput1,
                {
-                 a <- input$speciesInput1
+                 updateRadioButtons(session,
+                                   inputId = "oddevenInput1",
+                                   choices = unique(RTC.AGG.df[(RTC.AGG.df$Species == input$speciesInput1), ]$PinkOddEven)
+                 )
+               }
+  )
+  observeEvent(input$speciesInput1,
+               {
                  updateSelectInput(session,
                                    inputId = "districtInput1",
-                                   choices = unique(RTC.AGG.df[(RTC.AGG.df$Species == input$speciesInput1 & RTC.AGG.df$TYPE.STOCK == "Aggregate"), ]$District)
+                                   choices = unique(RTC.AGG.df[(RTC.AGG.df$Species == input$speciesInput1), ]$District)
                  )
                }
   )
   observeEvent(input$districtInput1,
                {
-                 b <- input$districtInput1
-                 updateSelectInput(session, "yearInput1",
+                 # b <- input$districtInput1
+                 updateSelectInput(session, 
+                                   inputId = "yearInput1",
                                    choices = unique(RTC.AGG.df[(RTC.AGG.df$Species == input$speciesInput1 & RTC.AGG.df$District == input$districtInput1), ]$YEAR.RANGE)
                  )
                }
   )
   observeEvent(input$districtInput1,
                {
-                 updateSelectInput(session, "example.yearInput1",
+                 updateSelectInput(session, 
+                                   inputId = "example.yearInput1",
                                    choices = unique(HIST.AY.RT.df[(HIST.AY.RT.df$SPECIES == input$speciesInput1 & HIST.AY.RT.df$District == input$districtInput1), ]$Year)
                  )
                }
@@ -254,14 +205,14 @@ server <- function(input, output, session) {
   
   aggregate_data <- reactive({
     
-    RTC.AGG.df %>% filter(Species == input$speciesInput1 & District == input$districtInput1 & YEAR.RANGE == input$yearInput1)
+    RTC.AGG.df %>% filter(Species == input$speciesInput1 & PinkOddEven == input$oddevenInput1 & District == input$districtInput1 & YEAR.RANGE == input$yearInput1)
     
   })
   
   aggregate.CY_data <- reactive({
     
     AGG.CY.AUC.df %>%
-      filter(Species == input$speciesInput1 & District == input$districtInput1)
+      filter(Species == input$speciesInput1 & PinkOddEven == input$oddevenInput1 & District == input$districtInput1 & YEAR.RANGE == input$yearInput1)
     
   })
   
@@ -275,25 +226,26 @@ server <- function(input, output, session) {
   aggregate.CY_table <- reactive({
     
     AGG.CY.AUC.table %>% 
-      filter(Species == input$speciesInput1 & District == input$districtInput1 & SurveyType %in% c(input$surveyType1) & Stream_Condition %in% c(input$surveyCondition1)) %>% 
+      filter(Species == input$speciesInput1 & PinkOddEven == input$oddevenInput1 & District == input$districtInput1 & YEAR.RANGE == input$yearInput1 & SurveyType %in% c(input$surveyType1) & Stream_Condition %in% c(input$surveyCondition1)) %>% 
       ungroup() %>% 
-      select(-c(Species,District))
+      select(-c(Species,District,PinkOddEven,YEAR.RANGE))
     
   })
+  
   
   ## Output plots - SEG's ----
   
   output$agg.seg.escape.1 <- renderPlot({
     
-    ggplot(aggregate_data(), aes(x = OriginDate)) +
+    ggplot() +
       
-      geom_line(aes(y = LowerSEG), color ="steelblue", linewidth = 0.7) +
-      geom_ribbon(aes(ymin = LowerSEG_se_lwr, ymax = LowerSEG_se_upr), fill = "steelblue", alpha = 0.3) +
+      geom_line(data = aggregate_data(), aes(x = OriginDate, y = LowerSEG), color ="steelblue", linewidth = 0.7) +
+      geom_ribbon(data = aggregate_data(), aes(x = OriginDate, ymin = LowerSEG_se_lwr, ymax = LowerSEG_se_upr), fill = "steelblue", alpha = 0.3) +
       
-      geom_line(aes(y = UpperSEG), color ="steelblue", linewidth = 0.7) +
-      geom_ribbon(aes(ymin = UpperSEG_se_lwr, ymax = UpperSEG_se_upr), fill = "steelblue", alpha = 0.3) +
+      geom_line(data = aggregate_data(), aes(x = OriginDate, y = UpperSEG), color ="steelblue", linewidth = 0.7) +
+      geom_ribbon(data = aggregate_data(), aes(x = OriginDate, ymin = UpperSEG_se_lwr, ymax = UpperSEG_se_upr), fill = "steelblue", alpha = 0.3) +
       
-      geom_ribbon(aes(ymin = LowerSEG_se_upr, ymax = UpperSEG_se_lwr), fill = "steelblue", alpha = 0.1) +
+      geom_ribbon(data = aggregate_data(), aes(x = OriginDate, ymin = LowerSEG_se_upr, ymax = UpperSEG_se_lwr), fill = "steelblue", alpha = 0.1) +
       
       geom_line(data = aggregate.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = DistSumEscape),
                 color = "red", lty = 2, linewidth = 1, alpha = 0.5) +
@@ -308,6 +260,8 @@ server <- function(input, output, session) {
       scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(296, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
       ylab("Cumulative Escapement")
+    
+    # print(p1)
     
   })
   
@@ -329,6 +283,8 @@ server <- function(input, output, session) {
             legend.justification.inside = c(0.02,1),
             legend.box.background = element_rect(color = "black", linewidth = 1, linetype = 1),
             legend.box.margin = margin(5, 5, 5, 5))
+    
+    # print(p2)
 
   })
   
@@ -336,6 +292,30 @@ server <- function(input, output, session) {
   
   ## Dynamic drop-down lists - ISMO's ----
   
+  # observeEvent(input$speciesInput2,
+  #              {
+  #                updateSelectInput(session,
+  #                                  inputId = "oddevenInput2",
+  #                                  choices = unique(RTC.IND.df[(RTC.IND.df$Species == input$speciesInput2), ]$PinkOddEven)
+  #                )
+  #              }
+  # )
+  observeEvent(input$speciesInput2,
+               {
+                 updateRadioButtons(session,
+                                    inputId = "oddevenInput2",
+                                    choices = unique(RTC.IND.df[(RTC.IND.df$Species == input$speciesInput2), ]$PinkOddEven)
+                 )
+               }
+  )
+  # observeEvent(input$speciesInput1,
+  #              {
+  #                updateRadioButtons(session,
+  #                                   inputId = "oddevenInput1",
+  #                                   choices = unique(RTC.AGG.df[(RTC.AGG.df$Species == input$speciesInput1), ]$PinkOddEven)
+  #                )
+  #              }
+  # )
   observeEvent(input$speciesInput2,
                {
                  x <- input$speciesInput2
@@ -371,8 +351,8 @@ server <- function(input, output, session) {
   
   ind.stock_data <- reactive({
     
-    RTC.IND.df %>% filter(Species == input$speciesInput2 & Stock == input$stockInput2 & YEAR.RANGE == input$yearInput2)
-    
+      RTC.IND.df %>% filter(Species == input$speciesInput2 & PinkOddEven == input$oddevenInput2 & Stock == input$stockInput2 & YEAR.RANGE == input$yearInput2)
+
   })
   
   ind.stock.CY_data <- reactive({
@@ -405,23 +385,25 @@ server <- function(input, output, session) {
       
       geom_ribbon(aes(ymin = LowerSEG_se_upr, ymax = UpperSEG_se_lwr), fill = "steelblue", alpha = 0.1) +
       
-      geom_line(data = example.year.ind.stock_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, color = Year),
-                color = "blue",lty = 3, linewidth = 1, alpha = 0.5) +
-      geom_point(data = example.year.ind.stock_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, fill = Year),
-                 shape = 21, fill = "blue", color = "black", size = 3) +
-      geom_line(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, linetype = SurveyType),
-                color = "red", linewidth = 1, alpha = 0.5) +
-      geom_point(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, shape = SurveyType, color = SurveyType),
-                 fill = "red", color = "black", size = 3) +
+      geom_line(data = example.year.ind.stock_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape),
+                color = "black", lty = 6, linewidth = 1, alpha = 0.5) +
+      geom_point(data = example.year.ind.stock_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape),
+                 color = "black", shape = 13, size = 3) +
+      geom_line(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, color = SurveyType, lty = SurveyType),
+                linewidth = 1, alpha = 0.5) +
+      geom_point(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, fill = SurveyType, shape = SurveyType),
+                 color = "black", size = 3) +
       geom_label_repel(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y = SumEscape, label = Stream_Condition, size = 7, fontface = "bold"),
                  point.padding = 1.5, label.size = 0.8, color = "black", fill = "white", show.legend = FALSE) +
+      scale_color_manual(values = c("red","blue","gold")) +
+      scale_fill_manual(values = c("red","blue","gold")) + 
       scale_shape_manual(values = c(21,22,24)) +
       scale_linetype_manual(values = c(2,3,4)) +
-      
+
       scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(296, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
       ylab("Cumulative Escapement") +
-      labs(shape = "Survey Type", linetype = "Survey Type", color = "Year", fill = "Year") +
+      labs(shape = "Survey Type", linetype = "Survey Type", color = "Survey Type", fill = "Survey Type", size = "Year") +
       
       theme(legend.position = "inside",
             legend.margin = margin(0, 0, 0, 0), # turned off for alignment
@@ -433,18 +415,20 @@ server <- function(input, output, session) {
   
   output$manage.obj.escape.2 <- renderPlot({
     
-    ggplot(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y=SurveyCount, label = Stream_Condition, shape = SurveyType, linetype = SurveyType)) + ## AUC plot
+    ggplot(data = ind.stock.CY_data(), aes(x = as.Date(JulianDay, origin = as.Date("0000-01-01")), y=SurveyCount, label = Stream_Condition, color = SurveyType, fill = SurveyType, shape = SurveyType, linetype = SurveyType)) + ## AUC plot
       
-      geom_line(color = "red", linewidth = 1, alpha = 0.5) + 
-      geom_point(fill = "red", color = "black", size = 3) +
+      geom_line(linewidth = 1, alpha = 0.5) + 
+      geom_point(color = "black", size = 3) +
       geom_label_repel(aes(size = 7, fontface = "bold"), point.padding = 1.5, label.size = 0.8, color = "black", fill = "white", show.legend = FALSE) +
+      scale_color_manual(values = c("red","blue","gold")) +
+      scale_fill_manual(values = c("red","blue","gold")) + 
       scale_shape_manual(values = c(21,22,24)) +
       scale_linetype_manual(values = c(2,3,4)) +
       
       scale_x_date(breaks = "1 week", date_labels = "%b %d", limits = c(as.Date(121, origin = as.Date("0000-01-01")),as.Date(296, origin = as.Date("0000-01-01"))), expand = c(0.02,0.02)) +
       xlab("Date") +
       ylab("Survey Count") +
-      labs(shape = "Survey Type", linetype = "Survey Type") +
+      labs(shape = "Survey Type", linetype = "Survey Type", color = "Survey Type", fill = "Survey Type") +
       
       theme(legend.position = "inside",
             legend.margin = margin(0, 0, 0, 0), # turned off for alignment
@@ -459,6 +443,8 @@ server <- function(input, output, session) {
   ## Hover text around cursor on plot ----
   
   output$plot_info1 <- renderText({
+    req(aggregate_data())
+    
     paste0("Date = ", format(as.Date(input$plot_hover1$x), "%b %d"), 
            "\nCumulative escapement = ", number(round(as.numeric(input$plot_hover1$y),0), big.mark = ","),
            "\nHistorical run-timing average escapement-to-date %: ",100*filter(aggregate_data(),JulianDay == yday(as.Date(input$plot_hover1$x)))$PercentEscape,"%",
