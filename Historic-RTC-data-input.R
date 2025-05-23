@@ -25,8 +25,8 @@ HIST.AY.RT.df <- read.csv("input/RUN_TIMING.csv") %>%
          JulianDay = as.POSIXlt(Date)$yday, ## converts date to Julian Date integer
          MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## create a MMDD date without year
          OriginDate = as.Date(JulianDay, origin = as.Date("0000-01-01")),
-         PinkOddEven = if_else(SPECIES == "Pink Salmon" & Year %% 2 == 0,"Even",NA),
-         PinkOddEven = if_else(SPECIES == "Pink Salmon" & Year %% 2 != 0,"Odd",PinkOddEven)) %>% 
+         PinkOddEven = if_else(SPECIES == "Pink Salmon" & Year %% 2 == 0,"Even-year",as.character("NA")),
+         PinkOddEven = if_else(SPECIES == "Pink Salmon" & Year %% 2 != 0,"Odd-year",PinkOddEven)) %>% 
   full_join(DIST.STOCKS,
             by = join_by(SPECIES == Full_Species,STOCK == Stock)) %>% 
   filter(!is.na(Date) & SPECIES %in% c("Chum Salmon","Sockeye Salmon","Pink Salmon"))
@@ -71,7 +71,7 @@ rm("RTC.IND.AY.df") ; for (i in c(1:nrow(STOCKS.IND.df))){
                UpperSEG_se_upr = ceiling(se_upr*STOCKS.IND.df$UPPER[i]),
                UpperSEG_se_lwr = ceiling(se_lwr*STOCKS.IND.df$UPPER[i]) )
       
-      if(exists('RTC.IND.10Y.df') && is.data.frame(get('RTC.IND.10Y.df'))){   ## checks to see if output dataframe exists
+      if(exists('RTC.IND.AY.df') && is.data.frame(get('RTC.IND.AY.df'))){   ## checks to see if output dataframe exists
         RTC.IND.AY.df <- rbind(RTC.IND.AY.df,model.preds)                 ## if it does, it appends new data
       }
       else {                                                                      ## if it doesn't creates new dataframe
@@ -86,7 +86,7 @@ rm("RTC.IND.AY.df") ; for (i in c(1:nrow(STOCKS.IND.df))){
     
     model.preds <- JDAY.MODEL.df %>% ## creates row from min to max date of data
       mutate(Species = STOCKS.IND.df$SPECIES[i],
-             PinkOddEven = NA,
+             PinkOddEven = as.character("NA"),
              Stock = STOCKS.IND.df$STOCK[i],
              District = STOCKS.IND.df$DISTRICT[i],
              MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## expresses date in MMDD format
@@ -163,7 +163,7 @@ rm("RTC.IND.10Y.df") ; for (i in c(1:nrow(STOCKS.IND.df))){
     
     model.preds <- JDAY.MODEL.df %>% ## creates row from min to max date of data
       mutate(Species = STOCKS.IND.df$SPECIES[i],
-             PinkOddEven = NA,
+             PinkOddEven = as.character("NA"),
              Stock = STOCKS.IND.df$STOCK[i],
              District = STOCKS.IND.df$DISTRICT[i],
              MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## expresses date in MMDD format
@@ -240,7 +240,7 @@ rm("RTC.IND.20Y.df") ; for (i in c(1:nrow(STOCKS.IND.df))){
     
     model.preds <- JDAY.MODEL.df %>% ## creates row from min to max date of data
       mutate(Species = STOCKS.IND.df$SPECIES[i],
-             PinkOddEven = NA,
+             PinkOddEven = as.character("NA"),
              Stock = STOCKS.IND.df$STOCK[i],
              District = STOCKS.IND.df$DISTRICT[i],
              MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## expresses date in MMDD format
@@ -302,7 +302,7 @@ rm("RTC.AGG.AY.df") ; for (i in c(1:nrow(STOCKS.AGG.df))){
                UpperSEG_se_upr = ceiling(se_upr*STOCKS.AGG.df$UPPER[i]),
                UpperSEG_se_lwr = ceiling(se_lwr*STOCKS.AGG.df$UPPER[i]) )
       
-      if(exists('RTC.AGG.10Y.df') && is.data.frame(get('RTC.AGG.10Y.df'))){   ## checks to see if output dataframe exists
+      if(exists('RTC.AGG.AY.df') && is.data.frame(get('RTC.AGG.AY.df'))){   ## checks to see if output dataframe exists
         RTC.AGG.AY.df <- rbind(RTC.AGG.AY.df,model.preds)                 ## if it does, it appends new data
       }
       else {                                                                      ## if it doesn't creates new dataframe
@@ -317,7 +317,7 @@ rm("RTC.AGG.AY.df") ; for (i in c(1:nrow(STOCKS.AGG.df))){
     
     model.preds <- JDAY.MODEL.df %>% ## creates row from min to max date of data
       mutate(Species = STOCKS.AGG.df$SPECIES[i],
-             PinkOddEven = NA,
+             PinkOddEven = as.character("NA"),
              Stock = STOCKS.AGG.df$STOCK[i],
              District = STOCKS.AGG.df$DISTRICT[i],
              MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## expresses date in MMDD format
@@ -394,7 +394,7 @@ rm("RTC.AGG.10Y.df") ; for (i in c(1:nrow(STOCKS.AGG.df))){
     
     model.preds <- JDAY.MODEL.df %>% ## creates row from min to max date of data
       mutate(Species = STOCKS.AGG.df$SPECIES[i],
-             PinkOddEven = NA,
+             PinkOddEven = as.character("NA"),
              Stock = STOCKS.AGG.df$STOCK[i],
              District = STOCKS.AGG.df$DISTRICT[i],
              MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## expresses date in MMDD format
@@ -471,7 +471,7 @@ rm("RTC.AGG.20Y.df") ; for (i in c(1:nrow(STOCKS.AGG.df))){
     
     model.preds <- JDAY.MODEL.df %>% ## creates row from min to max date of data
       mutate(Species = STOCKS.AGG.df$SPECIES[i],
-             PinkOddEven = NA,
+             PinkOddEven = as.character("NA"),
              Stock = STOCKS.AGG.df$STOCK[i],
              District = STOCKS.AGG.df$DISTRICT[i],
              MMDD = format(as.Date(JulianDay, origin = as.Date("0000-01-01")), "%m-%d"), ## expresses date in MMDD format
